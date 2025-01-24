@@ -17,9 +17,12 @@ interface User {
 const MatchStatus: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false)
+
 
   useEffect(() => {
     // Fetch match data from the server
+    setLoading(true)
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/status`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -35,9 +38,14 @@ const MatchStatus: React.FC = () => {
       .catch(error => {
         console.error('Error fetching match data:', error);
         setPopupMessage('Failed to fetch match data');
+        setLoading(false)
         setTimeout(() => setPopupMessage(null), 3000);
       });
   }, []);
+
+  if (loading) {
+    return <h1 className="text-2xl text-center mt-4">Loading...</h1>
+  }
 
   return (
     <div className="bg-gradient-to-r from-gray-100 via-blue-50 to-gray-100 flex items-center justify-center p-8 min-h-screen">

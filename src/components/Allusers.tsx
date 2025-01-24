@@ -20,11 +20,13 @@ interface AllusersProps {
 const Allusers: React.FC<AllusersProps> = ({ isAuthenticated, searchList }) => {
 
   const [list, setList] = useState<User[]>(searchList);
+  const [loading, setLoading] = useState<boolean>(false);
   const [page, setPage] = useState(1)
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (isAuthenticated && searchList.length == 0) {
+      setLoading(true)
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/all-users/${page}`, {
         method: 'GET',
         headers: {
@@ -37,10 +39,15 @@ const Allusers: React.FC<AllusersProps> = ({ isAuthenticated, searchList }) => {
           console.log(data);
           setList(data.users);
           setPopupMessage(data.message);
+          setLoading(false)
           setTimeout(() => setPopupMessage(null), 3000);
         });
     }
   }, [page]);
+
+  if (loading) {
+    return <h1 className="text-2xl text-center mt-4">Loading...</h1>
+  }
 
   return (
     <div className='w-full'>
@@ -59,7 +66,7 @@ const Allusers: React.FC<AllusersProps> = ({ isAuthenticated, searchList }) => {
                   <img
                     src={item.picture}
                     alt="User"
-                    className="h-11 w-11 rounded-full border border-gray-200"
+                    className="h-10 w-10 rounded-full border border-gray-200 p-1"
                   />
                   <p className="text-gray-800 font-medium text-lg">{item.name}</p>
                 </div>

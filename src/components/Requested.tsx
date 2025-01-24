@@ -19,11 +19,13 @@ const Requested: React.FC<Requestedprops> = ({ isAuthenticated }) => {
     }
 
     const [list, setList] = useState<User[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
     const [page, setPage] = useState(1)
     const [popupMessage, setPopupMessage] = useState<string | null>(null);
 
     useEffect(() => {
         if (isAuthenticated) {
+            setLoading(true)
             fetch(`${import.meta.env.VITE_BACKEND_URL}/api/requested-array/${page}`, {
                 method: 'GET',
                 headers: {
@@ -36,10 +38,16 @@ const Requested: React.FC<Requestedprops> = ({ isAuthenticated }) => {
                     console.log(data);
                     setList(data.users);
                     setPopupMessage(data.message);
+                    setLoading(false)
                     setTimeout(() => setPopupMessage(null), 3000);
+
                 });
         }
     }, [page]);
+
+    if (loading) {
+        return <h1 className="text-2xl text-center mt-4">Loading...</h1>
+    }
 
     return (
         <div className='w-full'>
@@ -58,7 +66,7 @@ const Requested: React.FC<Requestedprops> = ({ isAuthenticated }) => {
                                     <img
                                         src={item.picture}
                                         alt="User"
-                                        className="h-11 w-11 rounded-full border border-gray-200"
+                                        className="h-11 w-11 rounded-full border border-gray-200 p-1"
                                     />
                                     <p className="text-gray-800 font-medium text-lg">{item.name}</p>
                                 </div>

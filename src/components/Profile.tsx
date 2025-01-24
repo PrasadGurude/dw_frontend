@@ -26,9 +26,12 @@ const Profile: React.FC<ProfileProps> = ({ isAuthenticated }) => {
     insta_id: ''
   });
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false)
+
 
   useEffect(() => {
     if (isAuthenticated) {
+      setLoading(true)
       fetch(`${import.meta.env.VITE_BACKEND_URL}/api/profile`, {
         method: 'GET',
         headers: {
@@ -41,7 +44,8 @@ const Profile: React.FC<ProfileProps> = ({ isAuthenticated }) => {
           console.log(data)
           setUser({ ...user, ...data.user })
           setPopupMessage(data.message);
-            setTimeout(() => setPopupMessage(null), 3000);
+          setLoading(false)
+          setTimeout(() => setPopupMessage(null), 3000);
         })
     }
   }, [isAuthenticated])
@@ -78,6 +82,10 @@ const Profile: React.FC<ProfileProps> = ({ isAuthenticated }) => {
     setIsEditing(false);
     // Save the updated user information to the server or local storage here
   };
+
+  if (loading) {
+    return <h1 className="text-2xl text-center mt-4">Loading...</h1>
+  }
 
   return (
     <div className="bg-gradient-to-r from-gray-100 via-blue-50 to-gray-100 min-h-screen flex items-center justify-center p-8">
