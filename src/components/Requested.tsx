@@ -7,7 +7,7 @@ interface Requestedprops {
 const Requested: React.FC<Requestedprops> = ({ isAuthenticated }) => {
 
     interface User {
-        id:string;
+        id: string;
         name: string;
         email: string;
         age: number;
@@ -35,7 +35,6 @@ const Requested: React.FC<Requestedprops> = ({ isAuthenticated }) => {
             })
                 .then((res) => res.json())
                 .then((data) => {
-                    console.log(data);
                     setList(data.users);
                     setPopupMessage(data.message);
                     setLoading(false)
@@ -49,8 +48,17 @@ const Requested: React.FC<Requestedprops> = ({ isAuthenticated }) => {
         return <h1 className="text-2xl text-center mt-4">Loading...</h1>
     }
 
+    if (list.length === 0) {
+        return (
+            <div className="flex items-center justify-center w-full h-full">
+                <h1 className="text-2xl text-center mt-4">No Requests Found</h1>
+            </div>
+        );
+    }
+    
+
     return (
-        <div className='w-full'>
+        <div className='w-full flex flex-col items-center justify-center space-y-4'>
             {/* List Section */}
             {popupMessage ? (
                 <div className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white py-2 px-4 rounded shadow-md z-50">
@@ -73,26 +81,32 @@ const Requested: React.FC<Requestedprops> = ({ isAuthenticated }) => {
                                 <p className="text-gray-600"> {item.email} </p>
                                 <div className="flex space-x-2">
                                     <button
-                                     onClick={()=>{
-                                        window.open(`${item.insta_id}`)
-                                      }}
-                                     className="bg-white text-blue-500 px-2 py-1 rounded-full hover:bg-gray-100 transition duration-300 border border-gray-300">
+                                        onClick={() => {
+                                            window.open(`${item.insta_id}`)
+                                        }}
+                                        className="bg-white text-blue-500 px-2 py-1 rounded-full hover:bg-gray-100 transition duration-300 border border-gray-300">
                                         Instagram
                                     </button>
                                     <button
-                                    onClick={()=>{
-                                        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/send-remove-request`, {
-                                          method: 'PUT',
-                                          headers: {
-                                            'Content-Type': 'application/json',
-                                            'Authorization': `Bearer ${localStorage.getItem('token')}`
-                                          },
-                                          body: JSON.stringify({
-                                            requestedId: item.id
-                                          })
-                                        })
-                                      }}
-                                     className="bg-blue-500 text-white px-2 py-1 rounded-full hover:bg-blue-600 transition duration-300">
+                                        onClick={() => {
+                                            fetch(`${import.meta.env.VITE_BACKEND_URL}/api/send-remove-request`, {
+                                                method: 'PUT',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                                                },
+                                                body: JSON.stringify({
+                                                    requestedId: item.id
+                                                })
+                                            })
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    setList(list.filter((user) => user.id !== item.id));
+                                                    setPopupMessage(data.message);
+                                                    setTimeout(() => setPopupMessage(null), 3000);
+                                                })
+                                        }}
+                                        className="bg-blue-500 text-white px-2 py-1 rounded-full hover:bg-blue-600 transition duration-300">
                                         remove
                                     </button>
                                 </div>

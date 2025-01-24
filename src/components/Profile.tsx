@@ -76,8 +76,9 @@ const Profile: React.FC<ProfileProps> = ({ isAuthenticated }) => {
     })
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         setUser({ ...user, ...data.user })
+        setPopupMessage(data.message);
+        setTimeout(() => setPopupMessage(null), 3000);
       })
     setIsEditing(false);
     // Save the updated user information to the server or local storage here
@@ -125,6 +126,8 @@ const Profile: React.FC<ProfileProps> = ({ isAuthenticated }) => {
                 <input
                   type="number"
                   name="age"
+                  min={18}
+                  max={25}
                   value={user.age}
                   onChange={handleChange}
                   className="w-full p-2 mb-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -177,7 +180,7 @@ const Profile: React.FC<ProfileProps> = ({ isAuthenticated }) => {
           {isEditing ? (
             <select
               name="gender"
-              value={user.branch}
+              value={user.gender}
               onChange={handleChange}
               className="w-full p-2 mb-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
@@ -186,14 +189,14 @@ const Profile: React.FC<ProfileProps> = ({ isAuthenticated }) => {
               <option value="Other">Other</option>
             </select>
           ) : (
-            <p className="bg-gray-100 p-2 mb-4 rounded-lg">{user.gender}</p>
+            <p className="bg-gray-100 p-2 mb-4 rounded-lg">{user.gender || "select your gender"}</p>
           )}
 
           <label className="block text-gray-700 mb-2">Instagram Profile</label>
           {isEditing ? (
             <input
               type="text"
-              name="instaProfile"
+              name="insta_id"
               value={user.insta_id}
               onChange={handleChange}
               className="w-full p-2 mb-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -205,7 +208,7 @@ const Profile: React.FC<ProfileProps> = ({ isAuthenticated }) => {
               rel="noopener noreferrer"
               className="bg-gray-100 p-2 mb-4 rounded-lg block text-blue-500 hover:text-blue-700 transition duration-300"
             >
-              {user.insta_id}
+              {user.insta_id || 'Add Instagram URL'}
             </a>
           )}
         </div>

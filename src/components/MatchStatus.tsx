@@ -32,13 +32,12 @@ const MatchStatus: React.FC = () => {
       .then(data => {
         setUser(data.user);
         setPopupMessage(data.message);
+        setLoading(false)
         setTimeout(() => setPopupMessage(null), 3000);
-        console.log(data);
       })
       .catch(error => {
         console.error('Error fetching match data:', error);
         setPopupMessage('Failed to fetch match data');
-        setLoading(false)
         setTimeout(() => setPopupMessage(null), 3000);
       });
   }, []);

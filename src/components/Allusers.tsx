@@ -36,7 +36,6 @@ const Allusers: React.FC<AllusersProps> = ({ isAuthenticated, searchList }) => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
           setList(data.users);
           setPopupMessage(data.message);
           setLoading(false)
@@ -50,7 +49,7 @@ const Allusers: React.FC<AllusersProps> = ({ isAuthenticated, searchList }) => {
   }
 
   return (
-    <div className='w-full'>
+    <div className='w-full flex flex-col items-center justify-center space-y-4'>
       {popupMessage ? (
         <div className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg z-50 animate-bounce">
           {popupMessage}
